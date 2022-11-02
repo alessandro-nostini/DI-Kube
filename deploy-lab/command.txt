@@ -1,18 +1,33 @@
+
+kubectl create secret generic mssql --namespace hc-di --from-literal=MSSQL_SA_PASSWORD="aa1234BB"
+
+rem -------------------------------------------------
+
+
 kubectl create -f hc-di_hc-di-namespace.yaml
-kubectl create -f hc-di_hc-di-sql.yaml
+
 kubectl create -f hc-di_hc-di-mq.yaml
+kubectl create -f hc-di_hc-di-sql.yaml
+
 kubectl create -f hc-di_hc-di-ws.yaml
 kubectl create -f hc-di_hc-di-user.yaml
 kubectl create -f hc-di_hc-di-admin.yaml
 
+kubectl create -f hc-di_hc-di-yarp-user.yaml
+kubectl create -f hc-di_hc-di-yarp-admin.yaml
 
 rem -------------------------------------------------
+
+kubectl delete -f hc-di_hc-di-yarp-user.yaml
+kubectl delete -f hc-di_hc-di-yarp-admin.yaml
 
 kubectl delete -f hc-di_hc-di-user.yaml
 kubectl delete -f hc-di_hc-di-admin.yaml
 kubectl delete -f hc-di_hc-di-ws.yaml
+
 kubectl delete -f hc-di_hc-di-mq.yaml
 kubectl delete -f hc-di_hc-di-sql.yaml
+
 kubectl delete -f hc-di_hc-di-namespace.yaml
 
 rem -------------------------------------------------
@@ -21,8 +36,6 @@ kubectl get ingress --namespace hc-di
 kubectl get service --namespace hc-di
 
 
-kubectl create -f hc-di_hc-di-sql-novol.yaml
-
 kubectl create -f sql-server-2019-dev.yaml
 kubectl delete -f sql-server-2019-dev.yaml
 
@@ -30,3 +43,20 @@ kubectl create -f sql-server-2019-dev-pod.yaml
 kubectl delete -f sql-server-2019-dev-pod.yaml
 
 
+rem -------------------------------------------------
+
+
+kubectl exec hc-di-sql-0 /init/start.sh --namespace hc-di
+
+kubectl exec hc-di-mq-0 /config/mq-prov.bat --namespace hc-di
+
+
+
+rem -------------------------------------------------
+
+
+$ az aks show --resource-group myResourceGroup --name myAKSCluster --query nodeResourceGroup -o tsv
+
+MC_H-Connect-Kube_demoAksCluster_westeurope
+
+az disk create --resource-group MC_H-Connect-Kube_demoAksCluster_westeurope --name demoMqAksDisk --size-gb 20 --query id --output tsv
