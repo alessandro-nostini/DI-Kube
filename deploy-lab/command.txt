@@ -1,0 +1,32 @@
+kubectl create -f hc-di_hc-di-namespace.yaml
+kubectl create -f hc-di_hc-di-sql.yaml
+kubectl create -f hc-di_hc-di-mq.yaml
+kubectl create -f hc-di_hc-di-ws.yaml
+kubectl create -f hc-di_hc-di-user.yaml
+kubectl create -f hc-di_hc-di-admin.yaml
+
+
+rem -------------------------------------------------
+
+kubectl delete -f hc-di_hc-di-user.yaml
+kubectl delete -f hc-di_hc-di-admin.yaml
+kubectl delete -f hc-di_hc-di-ws.yaml
+kubectl delete -f hc-di_hc-di-mq.yaml
+kubectl delete -f hc-di_hc-di-sql.yaml
+kubectl delete -f hc-di_hc-di-namespace.yaml
+
+rem -------------------------------------------------
+
+kubectl get ingress --namespace hc-di
+kubectl get service --namespace hc-di
+
+
+kubectl create -f hc-di_hc-di-sql-novol.yaml
+
+kubectl create -f sql-server-2019-dev.yaml
+kubectl delete -f sql-server-2019-dev.yaml
+
+kubectl create -f sql-server-2019-dev-pod.yaml
+kubectl delete -f sql-server-2019-dev-pod.yaml
+
+
