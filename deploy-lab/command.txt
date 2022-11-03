@@ -60,3 +60,6 @@ $ az aks show --resource-group myResourceGroup --name myAKSCluster --query nodeR
 MC_H-Connect-Kube_demoAksCluster_westeurope
 
 az disk create --resource-group MC_H-Connect-Kube_demoAksCluster_westeurope --name demoMqAksDisk --size-gb 20 --query id --output tsv
+
+/subscriptions/ac164670-6bc6-4f61-b7a7-2ecbeefa13e4/resourceGroups/MC_H-Connect-Kube_demoAksCluster_westeurope/providers/Microsoft.Compute/disks/demoSqlAksDisk
+

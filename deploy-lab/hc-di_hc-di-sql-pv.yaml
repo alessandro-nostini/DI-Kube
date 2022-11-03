@@ -71,7 +71,43 @@ spec:
       persistentVolumeClaim:
         claimName: pvc-sql-disk
 
---- 
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-sql-di-sk
+  namespace: hc-di
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: pv-sql-disk
+  storageClassName: managed-csi
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-sql-disk
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: managed-csi
+  csi:
+    driver: disk.csi.azure.com
+    readOnly: false
+    volumeHandle: /subscriptions/ac164670-6bc6-4f61-b7a7-2ecbeefa13e4/resourceGroups/MC_H-Connect-Kube_demoAksCluster_westeurope/providers/Microsoft.Compute/disks/demoSqlAksDisk
+    volumeAttributes:
+      fsType: ext4
+
+---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
