@@ -43,15 +43,9 @@ kubectl create -f sql-server-2019-dev-pod.yaml
 kubectl delete -f sql-server-2019-dev-pod.yaml
 
 
+
 rem -------------------------------------------------
-
-
-kubectl exec hc-di-sql-0 /init/start.sh --namespace hc-di
-
-kubectl exec hc-di-mq-0 /config/mq-prov.bat --namespace hc-di
-
-
-
+rem ------------      DISK       --------------------
 rem -------------------------------------------------
 
 
@@ -66,5 +60,51 @@ az disk create --resource-group MC_H-Connect-Kube_demoAksCluster_westeurope --na
 /subscriptions/ac164670-6bc6-4f61-b7a7-2ecbeefa13e4/resourceGroups/MC_H-Connect-Kube_demoAksCluster_westeurope/providers/Microsoft.Compute/disks/demoSqlAksDisk
 
 
---hyper-v-generation {V1, V2}]
---sku {PremiumV2_LRS, Premium_LRS, Premium_ZRS, StandardSSD_LRS, StandardSSD_ZRS, Standard_LRS, UltraSSD_LRS}]
+
+rem -------------------------------------------------
+rem ------------      SQL       --------------------
+rem -------------------------------------------------
+
+
+kubectl exec --namespace hc-di hc-di-sql-0 -- /init/start.sh
+
+rem -------------------------------------------------
+rem ------------      MQ       --------------------
+rem -------------------------------------------------
+
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "dwh" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p / dwh .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "sac" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "/" "sac" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "oe" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "/" "oe" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "finder" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "/" "finder" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "configClient" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "/" "configClient" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "configManager" "aa1234BB"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "/" "configManager" .* .* .*
+
+# ****************************************
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_vhost "config"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "config" "configManager" .* .* .*
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "config" "configClient" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_vhost "dwh"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "dwh" "dwh" .* .* .*
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "dwh" "finder" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_vhost "oe"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "oe" "oe" .* .* .*
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "oe" "finder" .* .* .*
+
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_vhost "sac"
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "sac" "sac" .* .* .*
+kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p "sac" "finder" .* .* .*
