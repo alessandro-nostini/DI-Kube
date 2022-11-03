@@ -76,7 +76,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-sql-di-sk
+  name: pvc-sql-disk
   namespace: hc-di
 spec:
   accessModes:
