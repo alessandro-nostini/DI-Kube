@@ -66,10 +66,10 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
 
-  volumes:
-    - name: v-sql-disk
-      persistentVolumeClaim:
-        claimName: pvc-sql-disk
+      volumes:
+        - name: v-sql-disk
+          persistentVolumeClaim:
+            claimName: pvc-sql-disk
 
 ---
 
