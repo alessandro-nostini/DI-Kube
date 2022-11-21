@@ -36,12 +36,33 @@ kubectl get ingress --namespace hc-di
 kubectl get service --namespace hc-di
 
 
+rem -------------------------------------------------
+
+kubectl get deployment --namespace hc-di
+
+kubectl scale --replicas=3 --namespace hc-di deployment/hc-di-ws-sac
+kubectl get pods --namespace hc-di
+kubectl get replicasets --namespace hc-di
+kubectl describe deployment --namespace hc-di hc-di-ws-sac
+
+kubectl rollout restart --namespace hc-di deployment/hc-di-ws-sac
+kubectl rollout restart --namespace hc-di deployment/hc-di-ws-dwh
+kubectl rollout restart --namespace hc-di deployment/hc-di-ws-oe
+kubectl rollout restart --namespace hc-di deployment/hc-di-user
+kubectl rollout restart --namespace hc-di deployment/hc-di-admin
+kubectl rollout restart --namespace hc-di deployment/hc-di-user-yarp
+kubectl rollout restart --namespace hc-di deployment/hc-di-admin-yarp
+
+rem -- kubectl set image --namespace hc-di deployment hc-di-ws-sac hc-di-ws-sac=alessandronostini/deploy:hc-di-ws-sac-win-ltsc2019
+
+rem -------------------------------------------------
+
+
 kubectl create -f sql-server-2019-dev.yaml
 kubectl delete -f sql-server-2019-dev.yaml
 
 kubectl create -f sql-server-2019-dev-pod.yaml
 kubectl delete -f sql-server-2019-dev-pod.yaml
-
 
 
 rem -------------------------------------------------
@@ -72,6 +93,9 @@ rem -------------------------------------------------
 rem ------------      MQ       --------------------
 rem -------------------------------------------------
 
+kubectl exec --namespace hc-di hc-di-mq-0 -- add_user "admin" "User4deV_User4deV"
+kubectl exec --namespace hc-di hc-di-mq-0 -- set_permissions -p "/" "admin" .* .* .*
+kubectl exec --namespace hc-di hc-di-mq-0 -- set_user_tags "admin" administrator
 
 kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl add_user "dwh" "aa1234BB"
 kubectl exec --namespace hc-di hc-di-mq-0 -- rabbitmqctl set_permissions -p / dwh .* .* .*
